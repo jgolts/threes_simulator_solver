@@ -145,4 +145,19 @@ simulate <- function(n = 1000) {
 
 gen_expected(0, 0)
 
-scores <- simulate(100)
+scores <- simulate(10)
+
+winrate <- scores %>% 
+  mutate(
+    bestVrand = optimal < random,
+    bestVworst = optimal < worst,
+    randVworst = random < worst
+  ) %>% 
+  summarise(
+    mean_best = mean(best),
+    mean_rand = mean(random),
+    mean_worst = mean(worst),
+    winrate_bestVrand = mean(bestVrand),
+    winrate_bestVworst = mean(bestVworst),
+    winrate_randVworst = mean(randVworst)
+    )
