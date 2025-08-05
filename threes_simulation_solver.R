@@ -45,7 +45,7 @@ gen_min_set <- function(roll, n_saved, sum_saved){
   
   for (j in 1:nrow(uniq)) {
     subs <- uniq$subset[[j]]
-    saved_now <- sum(subs)
+    saved_now <- sum(ifelse(subs == 3, 0, subs))
     k <- length(subs)
     
     future <- gen_expected(n_saved + k, sum_saved + saved_now)
@@ -126,7 +126,7 @@ simulate_game <- function(strategy = c("best", "random", "worst")) {
     }
     
     n_saved <- n_saved + length(saved)
-    sum_saved <- sum_saved + sum(saved)
+    sum_saved <- sum_saved + sum(ifelse(saved == 3, 0, saved))
     remaining <- 5 - n_saved
   }
   
