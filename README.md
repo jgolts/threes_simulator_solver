@@ -2,3 +2,5 @@
 ![R Version](https://img.shields.io/badge/R-4.5.0-blue)
 
 A simulation that determines winrates for optimal, random, and anti-optimal strategies in the dice game Threes. Includes a function that determines best combination of dice to save at a given point in the game. The function in question is `gen_min_set`, and to use it, you supply a vector of dice rolled on that turn (e.g. `c(2, 3, 5)`), and then the number of dice saved/out of play, and the sum of their values.
+
+When running the simulation, first run `precompute()` and `gen_expected(0, 0)` to warm up the cache. This will make the `simulate` call much quicker.
