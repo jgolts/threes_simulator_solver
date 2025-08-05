@@ -107,7 +107,7 @@ simulate_game <- function(strategy = c("best", "random", "worst")) {
       saved <- uniq$subset[[i]]
     } 
     else if (strategy == "worst") {
-      worst_score <- Inf
+      worst_score <- -Inf
       for (j in 1:nrow(uniq)) {
         subs <- uniq$subset[[j]]
         future <- gen_expected(n_saved + length(subs), sum_saved + sum(subs))
@@ -158,8 +158,8 @@ scores <- simulate(10)
 
 winrate <- scores %>% 
   mutate(
-    bestVrand = optimal < random,
-    bestVworst = optimal < worst,
+    bestVrand = best < random,
+    bestVworst = best < worst,
     randVworst = random < worst
   ) %>% 
   summarise(
