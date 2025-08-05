@@ -73,22 +73,16 @@ gen_expected <- function(n_saved, sum_saved){
   k <- 5 - n_saved
   cartes <- gen_cartes(k)
   
-  expected <- with_progress({
-    p <- progressor(steps = nrow(cartes))
-    
-    scores <- future_map_dbl(
-      1:nrow(cartes),
-      function(i) {
-        roll <- as.integer(cartes[i, ])
-        min_set <- gen_min_set(roll, n_saved, sum_saved)
-        p()
-        return(min_set$score)
-      },
-      .options = furrr_options(seed = TRUE)
-    )
-    
-    mean(scores)
-  })
+  scores <- map_dbl(
+    1:nrow(cartes),
+    function(i) {
+      roll <- as.integer(cartes[i, ])
+      min_set <- gen_min_set(roll, n_saved, sum_saved)
+      return(min_set$score)
+    }
+  )
+  
+  expected <- mean(scores)
   
   exp_memo[[exp_concat]] <- expected
   return(expected)
@@ -133,15 +127,30 @@ simulate_game <- function(strategy = c("best", "random", "worst")) {
   return(sum_saved)
 }
 
-simulate <- function(n = 1000) {
-  scores <- tibble(
-    best = replicate(n, simulate_game("best")),
-    random = replicate(n, simulate_game("random")),
-    worst = replicate(n, simulate_game("worst"))
+simulate_parallel <- function(n = 1000) {
+  scores <- future_map_dfr(
+    1:n,
+    function(i) tibble(
+      best = simulate_game("best"),
+      random = simulate_game("random"),
+      worst = simulate_game("worst")
+    ),
+    .options = furrr_options(seed = TRUE),
+    .progress = TRUE
   )
   
   return(scores)
 }
+
+precompute <- function() {
+  for (n_saved in 0:4) {
+    for (sum_saved in (n_saved):(n_saved * 6)) {
+      gen_expected(n_saved, sum_saved)
+    }
+  }
+}
+
+precompute()
 
 gen_expected(0, 0)
 
