@@ -127,7 +127,7 @@ simulate_game <- function(strategy = c("best", "random", "worst")) {
   return(sum_saved)
 }
 
-simulate_parallel <- function(n = 1000) {
+simulate <- function(n = 1000) {
   scores <- future_map_dfr(
     1:n,
     function(i) tibble(
